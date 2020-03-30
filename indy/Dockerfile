@@ -11,7 +11,7 @@ ADD start-indy.py /usr/local/bin/start-indy.py
 ARG tarball_url
 ARG data_tarball_url
 
-RUN mkdir -p /usr/share/indy /opt/indy/var/lib/indy/data/promote
+RUN mkdir -p /usr/share/indy /opt/indy/var/lib/indy/data/promote /opt/indy/var/log/indy
 
 ADD $tarball_url /opt/indy-launcher-skinny.tar.gz
 ADD $data_tarball_url /usr/share/indy/indy-launcher-data.tar.gz
