@@ -6,12 +6,12 @@ EXPOSE 8080 8081 8000
 
 USER root
 
-ADD start-indy.py /usr/local/bin/start-indy.py
+RUN mkdir -p /usr/share/indy /usr/share/indy/data/promote/rules /opt/indy/var/lib/indy/ui /opt/indy/var/log/indy /var/log/indy /etc/indy
+
+ADD --chown=1001 start-indy.py /usr/local/bin/start-indy.py
 
 ARG tarball_url
 ARG data_tarball_url
-
-RUN mkdir -p /usr/share/indy /opt/indy/var/lib/indy/data/promote /opt/indy/var/log/indy
 
 ADD $tarball_url /opt/indy-launcher-skinny.tar.gz
 ADD $data_tarball_url /usr/share/indy/indy-launcher-data.tar.gz
@@ -24,15 +24,14 @@ RUN tar -xf /opt/indy-launcher-skinny.tar.gz -C /opt && \
 
 ENTRYPOINT ["/usr/local/bin/dumb-init", "/usr/local/bin/start-indy.py"]
 
-RUN mkdir -p /etc/indy /var/log/indy && \
-    chmod -R 777 /etc/indy && chmod -R 777 /var/log/indy && chmod -R 777 /usr/share/indy && \
+RUN chmod -R 777 /etc/indy && chmod -R 777 /var/log/indy && chmod -R 777 /usr/share/indy && \
     ln -s /opt/indy/var/lib/indy/ui /usr/share/indy && \
     yum remove -y java-1.8.0-openjdk java-1.8.0-openjdk-headless &&  \
-    wget -P /tmp http://mirror.centos.org/centos/7.7.1908/os/x86_64/RPM-GPG-KEY-CentOS-7 && \
+    wget -P /tmp http://mirror.centos.org/centos/7/os/x86_64/RPM-GPG-KEY-CentOS-7 && \
     rpm --import /tmp/RPM-GPG-KEY-CentOS-7 && \
-    yum-config-manager --add-repo=http://mirror.centos.org/centos/7.7.1908/os/x86_64/ && \
+    yum-config-manager --add-repo http://mirror.centos.org/centos/7/os/x86_64/ && \
     yum update -y --security && \
-    yum install -y java-11-openjdk-devel.x86_64 java-11-openjdk-headless.x86_64 && \
+    yum install -y java-11-openjdk-devel.x86_64 java-11-openjdk-headless.x86_64 dstat && \
     yum clean all && rm -rf /var/cache/yum
 
 ADD lowOverhead.jfc /usr/share/indy/flightrecorder.jfc
